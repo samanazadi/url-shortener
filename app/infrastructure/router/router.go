@@ -8,5 +8,5 @@ var Router *gin.Engine
 func init() {
 	Router := gin.Default()
 
-	Router.GET("/get", func(c *gin.Context) {})
+	Router.GET("/u/:id", func(c *gin.Context) {})
 }
