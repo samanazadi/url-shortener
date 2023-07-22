@@ -1,6 +1,8 @@
 package router
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/samanazadi/url-shortener/app/infrastructure/database/postgres"
 	"github.com/samanazadi/url-shortener/app/infrastructure/router/JSON"
@@ -17,6 +19,9 @@ func init() {
 	Router.GET("/u/:id", func(c *gin.Context) {
 		urlController.GetOriginalURL(WebURLControllerInputPort{c: c})
 	})
+	Router.GET("/r/:id", func(c *gin.Context) {
+		urlController.RedirectToOriginalURL(WebURLControllerInputPort{c: c})
+	})
 }
 
 // WebURLControllerInputPort implements controllers.URLControllerInputPort
@@ -31,21 +36,27 @@ func (w WebURLControllerInputPort) Param(p string) string {
 
 // Output returns result JSON to client
 func (w WebURLControllerInputPort) Output(op int, res any) {
-	if op == controllers.Show {
+	switch op {
+	case controllers.Show:
 		j := JSON.SuccessRetrieval{
 			Message:     "Successful",
 			OriginalURL: res.(string)}
-		w.c.IndentedJSON(200, j)
+		w.c.IndentedJSON(http.StatusOK, j)
+	case controllers.Redirect:
+		w.c.Redirect(http.StatusFound, res.(string))
 	}
 }
 
 // OutputError returns error JSON to client
 func (w WebURLControllerInputPort) OutputError(op int, err error) {
-	if op == controllers.URLNotFound {
+	switch op {
+	case controllers.URLNotFound:
 		j := JSON.UnsuccessfulRetrieval{
 			Message: "Unsuccessful",
 			Error:   err.Error(),
 		}
-		w.c.IndentedJSON(404, j)
+		w.c.IndentedJSON(http.StatusNotFound, j)
+	case controllers.RedirectToHomePage:
+		w.c.Redirect(http.StatusFound, "/")
 	}
 }

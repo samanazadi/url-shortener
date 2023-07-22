@@ -32,14 +32,25 @@ func (u URLController) GetOriginalURL(p URLControllerInputPort) {
 	p.Output(Show, originalURL)
 }
 
+func (u URLController) RedirectToOriginalURL(p URLControllerInputPort) {
+	url := p.Param("id")
+	originalURL, err := u.urlUseCase.OriginalURL(url)
+	if err != nil {
+		p.OutputError(RedirectToHomePage, err)
+		return
+	}
+	p.Output(Redirect, originalURL)
+}
+
 const (
-	// Show id a successful retrieval of an URL
 	Show = iota
+	Redirect
 )
 
 const (
 	// URLNotFound is an unsuccessful retrieval of an URL
 	URLNotFound = iota
+	RedirectToHomePage
 )
 
 // URLControllerInputPort will be injected by infrastructure layer
