@@ -32,6 +32,7 @@ func (u URLController) GetOriginalURL(p URLControllerInputPort) {
 	p.Output(Show, originalURL)
 }
 
+// RedirectToOriginalURL redirects to original URL is exists and redirects to homepage otherwise
 func (u URLController) RedirectToOriginalURL(p URLControllerInputPort) {
 	url := p.Param("id")
 	originalURL, err := u.urlUseCase.OriginalURL(url)
@@ -43,13 +44,16 @@ func (u URLController) RedirectToOriginalURL(p URLControllerInputPort) {
 }
 
 const (
+	// Show means successful and show original URL
 	Show = iota
+	// Redirect means successful and redirect to original URL
 	Redirect
 )
 
 const (
 	// URLNotFound is an unsuccessful retrieval of an URL
 	URLNotFound = iota
+	// RedirectToHomePage unsuccessful and redirect to homepage
 	RedirectToHomePage
 )
 
