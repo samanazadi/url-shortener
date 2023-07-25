@@ -19,7 +19,7 @@ func init() {
 	Router.GET("/u/:id", func(c *gin.Context) {
 		urlController.GetOriginalURL(WebURLControllerInputPort{c: c})
 	})
-	Router.GET("/r/:id", func(c *gin.Context) {
+	Router.GET("/:id", func(c *gin.Context) {
 		urlController.RedirectToOriginalURL(WebURLControllerInputPort{c: c})
 	})
 }
