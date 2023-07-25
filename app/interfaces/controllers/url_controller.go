@@ -84,11 +84,11 @@ type URLControllerRepository struct {
 
 // FindURL queries the database for specified URL
 func (r URLControllerRepository) FindURL(u string) (entities.URL, error) {
-	row := r.SQLHandler.QueryRow("SELECT * FROM urls WHERE url = $1", u)
-	var url, originalURL string
-	err := row.Scan(&url, &originalURL)
+	row := r.SQLHandler.QueryRow("SELECT * FROM urls WHERE short_url = $1", u)
+	var shortURL, originalURL string
+	err := row.Scan(&shortURL, &originalURL)
 	if err != nil {
 		return entities.URL{}, err
 	}
-	return entities.URL{URL: url, OriginalURL: originalURL}, nil
+	return entities.URL{URL: shortURL, OriginalURL: originalURL}, nil
 }
