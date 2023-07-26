@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/samanazadi/url-shortener/app/entities"
 	"github.com/samanazadi/url-shortener/app/usecases"
+	"log"
 )
 
 // URLController is responsible for redirecting user
@@ -40,6 +41,12 @@ func (u URLController) RedirectToOriginalURL(p URLControllerInputPort) {
 		p.OutputError(RedirectToHomePage, err)
 		return
 	}
+	vd := p.GetVisitDetail()
+	vd.ShortURL = shortURL
+	err = u.urlUseCase.SaveVisitDetails(vd)
+	if err != nil {
+		log.Printf("Cannot save visit: %s", err)
+	}
 	p.Output(Redirect, originalURL)
 }
 
@@ -60,6 +67,7 @@ const (
 // URLControllerInputPort will be injected by infrastructure layer
 type URLControllerInputPort interface {
 	Param(string) string
+	GetVisitDetail() usecases.VisitDetails
 	Output(int, any)
 	OutputError(int, error)
 }
@@ -95,4 +103,10 @@ func (r URLControllerRepository) FindURL(u string) (entities.URL, error) {
 		return entities.URL{}, err
 	}
 	return entities.URL{URL: shortURL, OriginalURL: originalURL}, nil
+}
+
+func (r URLControllerRepository) SaveVisitDetails(vd usecases.VisitDetails) error {
+	_, err := r.SQLHandler.Exec("INSERT INTO visits (ip, time, user_agent, short_url) VALUES ($1, $2, $3, $4)",
+		vd.IP, vd.Time, vd.UserAgent, vd.ShortURL)
+	return err
 }

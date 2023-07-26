@@ -1,7 +1,9 @@
 package router
 
 import (
+	"github.com/samanazadi/url-shortener/app/usecases"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/samanazadi/url-shortener/app/infrastructure/database/postgres"
@@ -59,4 +61,12 @@ func (w WebURLControllerInputPort) OutputError(op int, err error) {
 	case controllers.RedirectToHomePage:
 		w.c.Redirect(http.StatusFound, "/")
 	}
+}
+
+func (w WebURLControllerInputPort) GetVisitDetail() usecases.VisitDetails {
+	vd := usecases.VisitDetails{}
+	vd.IP = w.c.ClientIP()
+	vd.Time = time.Now()
+	vd.UserAgent = w.c.GetHeader("User-Agent")
+	return vd
 }
