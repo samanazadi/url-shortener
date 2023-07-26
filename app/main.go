@@ -6,5 +6,8 @@ import (
 )
 
 func main() {
-	router.Router.Run(config.GetString("server") + ":" + config.GetString("port"))
+	err := router.Router.Run(config.GetString("server") + ":" + config.GetString("port"))
+	if err != nil {
+		panic(err)
+	}
 }
