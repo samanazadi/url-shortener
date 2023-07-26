@@ -34,8 +34,8 @@ func (u URLController) GetOriginalURL(p URLControllerInputPort) {
 
 // RedirectToOriginalURL redirects to original URL is exists and redirects to homepage otherwise
 func (u URLController) RedirectToOriginalURL(p URLControllerInputPort) {
-	url := p.Param("id")
-	originalURL, err := u.urlUseCase.OriginalURL(url)
+	shortURL := p.Param("id")
+	originalURL, err := u.urlUseCase.OriginalURL(shortURL)
 	if err != nil {
 		p.OutputError(RedirectToHomePage, err)
 		return
