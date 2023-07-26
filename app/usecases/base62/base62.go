@@ -30,7 +30,7 @@ func int64ToString(i int64) string {
 	return encoded
 }
 
-// schema: 0[39 bits milli seconds from base / 10][16 bits machine ID][8 bits seq]
+// schema: 0[39 bits milliseconds from base / 10][16 bits machine ID][8 bits seq]
 func makeInt64(unixMilli int64, machineID uint16, seq uint8) int64 {
 	id := int64(seq) // start with seq on the right
 	id += int64(machineID) << 8

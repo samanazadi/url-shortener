@@ -1,6 +1,6 @@
 package entities
 
-// URL is a URL and its corresponsidng original URL
+// URL is a URL and its corresponding original URL
 type URL struct {
 	URL         string
 	OriginalURL string

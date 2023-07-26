@@ -51,7 +51,7 @@ const (
 )
 
 const (
-	// URLNotFound is an unsuccessful retrieval of an URL
+	// URLNotFound is an unsuccessful retrieval of a URL
 	URLNotFound = iota
 	// RedirectToHomePage unsuccessful and redirect to homepage
 	RedirectToHomePage
