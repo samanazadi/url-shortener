@@ -1,17 +1,23 @@
 package config
 
-var configs = make(map[string]any)
+import (
+	"github.com/spf13/viper"
+)
 
 func init() {
-	configs["server"] = "localhost"
-	configs["port"] = "8080"
-	configs["dbuser"] = "postgres"
-	configs["dbpass"] = "alaki"
-	configs["dbhost"] = "localhost"
-	configs["dbdb"] = "url-shortener"
+	viper.SetConfigFile(".env")
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(err)
+	}
 }
 
 // GetString returns specified config in string
 func GetString(name string) string {
-	return configs[name].(string)
+	return viper.GetString(name)
+}
+
+// GetInt returns specified config in int
+func GetInt(name string) int {
+	return viper.GetInt(name)
 }
