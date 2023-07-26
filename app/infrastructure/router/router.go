@@ -63,8 +63,8 @@ func (w WebURLControllerInputPort) OutputError(op int, err error) {
 	}
 }
 
-func (w WebURLControllerInputPort) GetVisitDetail() entities.VisitDetails {
-	vd := entities.VisitDetails{}
+func (w WebURLControllerInputPort) GetVisitDetail() entities.VisitDetail {
+	vd := entities.VisitDetail{}
 	vd.IP = w.c.ClientIP()
 	vd.Time = time.Now()
 	vd.UserAgent = w.c.GetHeader("User-Agent")

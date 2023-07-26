@@ -43,7 +43,7 @@ func (u URLController) RedirectToOriginalURL(p URLControllerInputPort) {
 	}
 	vd := p.GetVisitDetail()
 	vd.ShortURL = shortURL
-	err = u.urlUseCase.SaveVisitDetails(vd)
+	err = u.urlUseCase.SaveVisitDetail(vd)
 	if err != nil {
 		log.Printf("Cannot save visit: %s", err)
 	}
@@ -67,7 +67,7 @@ const (
 // URLControllerInputPort will be injected by infrastructure layer
 type URLControllerInputPort interface {
 	Param(string) string
-	GetVisitDetail() entities.VisitDetails
+	GetVisitDetail() entities.VisitDetail
 	Output(int, any)
 	OutputError(int, error)
 }
@@ -105,7 +105,7 @@ func (r URLControllerRepository) FindURL(u string) (entities.URL, error) {
 	return entities.URL{URL: shortURL, OriginalURL: originalURL}, nil
 }
 
-func (r URLControllerRepository) SaveVisitDetails(vd entities.VisitDetails) error {
+func (r URLControllerRepository) SaveVisitDetail(vd entities.VisitDetail) error {
 	_, err := r.SQLHandler.Exec("INSERT INTO visits (ip, time, user_agent, short_url) VALUES ($1, $2, $3, $4)",
 		vd.IP, vd.Time, vd.UserAgent, vd.ShortURL)
 	return err

@@ -8,8 +8,8 @@ type URL struct {
 	OriginalURL string
 }
 
-// VisitDetails is details of a single visits of a URL
-type VisitDetails struct {
+// VisitDetail is details of a single visits of a URL
+type VisitDetail struct {
 	IP        string
 	Time      time.Time
 	UserAgent string
