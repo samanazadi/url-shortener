@@ -19,7 +19,7 @@ func init() {
 	urlController := controllers.NewURLController(postgres.NewSQLHandler())
 
 	Router.GET("/u/:id", func(c *gin.Context) {
-		urlController.GetOriginalURL(WebURLControllerInputPort{c: c})
+		urlController.GetDetails(WebURLControllerInputPort{c: c})
 	})
 	Router.GET("/:id", func(c *gin.Context) {
 		urlController.RedirectToOriginalURL(WebURLControllerInputPort{c: c})
@@ -32,21 +32,36 @@ type WebURLControllerInputPort struct {
 }
 
 // Param retrieves URL parameter p
-func (w WebURLControllerInputPort) Param(p string) string {
-	return w.c.Param(p)
+func (w WebURLControllerInputPort) Param(param string) string {
+	if p := w.c.Param(param); p != "" {
+		return p
+	}
+	return w.c.Query(param)
+
 }
 
 // Output returns result JSON to client
-func (w WebURLControllerInputPort) Output(op int, res any) {
-	switch op {
-	case controllers.Show:
-		j := JSON.SuccessRetrieval{
-			Message:     "Successful",
-			OriginalURL: res.(string)}
-		w.c.IndentedJSON(http.StatusOK, j)
-	case controllers.Redirect:
-		w.c.Redirect(http.StatusFound, res.(string))
+func (w WebURLControllerInputPort) Output(u string, v []entities.VisitDetail, total int) {
+	vds := make([]JSON.VisitDetail, 0)
+	for _, vd := range v {
+		vds = append(vds, JSON.VisitDetail{
+			IP:        vd.IP,
+			Time:      vd.Time,
+			UserAgent: vd.UserAgent,
+		})
 	}
+
+	res := JSON.SuccessRetrieval{
+		Message:      "Successful",
+		OriginalURL:  u,
+		Total:        total,
+		VisitDetails: vds,
+	}
+	w.c.IndentedJSON(http.StatusOK, res)
+}
+
+func (w WebURLControllerInputPort) Redirect(u string) {
+	w.c.Redirect(http.StatusFound, u)
 }
 
 // OutputError returns error JSON to client

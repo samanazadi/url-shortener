@@ -18,12 +18,20 @@ func (u URLUsecase) OriginalURL(url string) (string, error) {
 	return ue.OriginalURL, nil
 }
 
-func (u URLUsecase) SaveVisitDetails(vd entities.VisitDetails) error {
-	return u.URLRepository.SaveVisitDetails(vd)
+func (u URLUsecase) SaveVisitDetail(vd entities.VisitDetail) error {
+	return u.URLRepository.SaveVisitDetail(vd)
+}
+
+func (u URLUsecase) Visits(url string, offset int, limit int) ([]entities.VisitDetail, int, error) {
+	total := u.URLRepository.TotalVisits(url)
+	vds, err := u.URLRepository.FindVisits(url, offset, limit)
+	return vds, total, err
 }
 
 // URLRepository defines abstract repository operations
 type URLRepository interface {
 	FindURL(string) (entities.URL, error)
-	SaveVisitDetails(entities.VisitDetails) error
+	SaveVisitDetail(entities.VisitDetail) error
+	FindVisits(u string, offset int, limit int) ([]entities.VisitDetail, error)
+	TotalVisits(u string) int
 }

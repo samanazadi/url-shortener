@@ -24,6 +24,10 @@ func (h PQSQLHandler) QueryRow(s string, args ...any) controllers.Row {
 	return h.conn.QueryRow(s, args...)
 }
 
+func (h PQSQLHandler) Query(s string, args ...any) (controllers.Rows, error) {
+	return h.conn.Query(s, args...)
+}
+
 // NewSQLHandler creates a controllers.SQLHandler implementation for postgres
 func NewSQLHandler() controllers.SQLHandler {
 	dbuser := config.GetString("dbuser")
