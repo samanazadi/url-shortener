@@ -16,7 +16,7 @@ type PQSQLHandler struct {
 
 // Exec uses Exec on postgres
 func (h PQSQLHandler) Exec(s string, args ...any) (controllers.Result, error) {
-	return h.conn.Exec(s, args)
+	return h.conn.Exec(s, args...)
 }
 
 // QueryRow uses QueryRow on postgres
