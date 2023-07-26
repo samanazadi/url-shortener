@@ -67,7 +67,7 @@ const (
 // URLControllerInputPort will be injected by infrastructure layer
 type URLControllerInputPort interface {
 	Param(string) string
-	GetVisitDetail() usecases.VisitDetails
+	GetVisitDetail() entities.VisitDetails
 	Output(int, any)
 	OutputError(int, error)
 }
@@ -105,7 +105,7 @@ func (r URLControllerRepository) FindURL(u string) (entities.URL, error) {
 	return entities.URL{URL: shortURL, OriginalURL: originalURL}, nil
 }
 
-func (r URLControllerRepository) SaveVisitDetails(vd usecases.VisitDetails) error {
+func (r URLControllerRepository) SaveVisitDetails(vd entities.VisitDetails) error {
 	_, err := r.SQLHandler.Exec("INSERT INTO visits (ip, time, user_agent, short_url) VALUES ($1, $2, $3, $4)",
 		vd.IP, vd.Time, vd.UserAgent, vd.ShortURL)
 	return err

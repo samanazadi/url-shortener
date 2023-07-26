@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/samanazadi/url-shortener/app/usecases"
+	"github.com/samanazadi/url-shortener/app/entities"
 	"net/http"
 	"time"
 
@@ -63,8 +63,8 @@ func (w WebURLControllerInputPort) OutputError(op int, err error) {
 	}
 }
 
-func (w WebURLControllerInputPort) GetVisitDetail() usecases.VisitDetails {
-	vd := usecases.VisitDetails{}
+func (w WebURLControllerInputPort) GetVisitDetail() entities.VisitDetails {
+	vd := entities.VisitDetails{}
 	vd.IP = w.c.ClientIP()
 	vd.Time = time.Now()
 	vd.UserAgent = w.c.GetHeader("User-Agent")
