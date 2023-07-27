@@ -17,7 +17,7 @@ func GetString(name string) string {
 	return viper.GetString(name)
 }
 
-// GetInt returns specified config in int
-func GetInt(name string) int {
-	return viper.GetInt(name)
+// GetUint16 returns specified config in int
+func GetUint16(name string) uint16 {
+	return viper.GetUint16(name)
 }

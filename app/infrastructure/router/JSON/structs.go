@@ -15,7 +15,16 @@ type SuccessRetrieval struct {
 	VisitDetails []VisitDetail `json:"visits"`
 }
 
-type UnsuccessfulRetrieval struct {
+type SuccessShortURLCreated struct {
+	Message  string `json:"message"`
+	ShortURL string `json:"short_url"`
+}
+
+type MessageError struct {
 	Message string `json:"message"`
 	Error   string `json:"error"`
+}
+
+type CreateShortURLRequestBody struct {
+	URL string `json:"url" binding:"required,url"`
 }

@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"github.com/samanazadi/url-shortener/app/entities"
+	"github.com/samanazadi/url-shortener/app/usecases/base62"
 )
 
 // URLUsecase implements url fetching logic
@@ -18,6 +19,14 @@ func (u URLUsecase) OriginalURL(url string) (string, error) {
 	return ue.OriginalURL, nil
 }
 
+func (u URLUsecase) SaveURL(url string, machineID uint16) (string, error) {
+	shortURL := base62.GenerateID(machineID)
+	if err := u.URLRepository.SaveShortURL(url, shortURL); err != nil {
+		return "", nil
+	}
+	return shortURL, nil
+}
+
 func (u URLUsecase) SaveVisitDetail(vd entities.VisitDetail) error {
 	return u.URLRepository.SaveVisitDetail(vd)
 }
@@ -32,6 +41,7 @@ func (u URLUsecase) Visits(url string, offset int, limit int) ([]entities.VisitD
 type URLRepository interface {
 	FindURL(string) (entities.URL, error)
 	SaveVisitDetail(entities.VisitDetail) error
+	SaveShortURL(u string, s string) error
 	FindVisits(u string, offset int, limit int) ([]entities.VisitDetail, error)
 	TotalVisits(u string) int
 }

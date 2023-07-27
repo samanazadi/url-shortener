@@ -36,7 +36,22 @@ func (u URLController) GetDetails(p URLControllerInputPort) {
 	}
 	vds, total, _ := u.urlUseCase.Visits(url, offset, limit)
 
-	p.Output(originalURL, vds, total)
+	p.OutputVisitDetails(originalURL, vds, total)
+}
+
+// CreateShortLink create a short link for the URL in request
+func (u URLController) CreateShortLink(p URLControllerInputPort) {
+	originalURL, err := p.GetCreateShortURLRequest()
+	if err != nil {
+		p.OutputError(BadRequest, err)
+		return
+	}
+	shortURL, err := u.urlUseCase.SaveURL(originalURL, p.GetMachineID())
+	if err != nil {
+		p.OutputError(CannotCreateShortLink, err)
+		return
+	}
+	p.OutputShortURL(shortURL)
 }
 
 // RedirectToOriginalURL redirects to original URL is exists and redirects to homepage otherwise
@@ -61,15 +76,20 @@ const (
 	URLNotFound = iota
 	// RedirectToHomePage unsuccessful and redirect to homepage
 	RedirectToHomePage
+	CannotCreateShortLink
+	BadRequest
 )
 
 // URLControllerInputPort will be injected by infrastructure layer
 type URLControllerInputPort interface {
 	Param(string) string
+	GetMachineID() uint16
+	GetCreateShortURLRequest() (string, error)
 	GetVisitDetail() entities.VisitDetail
-	Output(string, []entities.VisitDetail, int)
-	Redirect(u string)
+	OutputShortURL(string)
+	OutputVisitDetails(string, []entities.VisitDetail, int)
 	OutputError(int, error)
+	Redirect(u string)
 }
 
 // SQLHandler will be injected by infrastructure layer
@@ -98,6 +118,12 @@ type Rows interface {
 // URLControllerRepository is an implementation of usecases.URLRepository
 type URLControllerRepository struct {
 	SQLHandler SQLHandler
+}
+
+func (r URLControllerRepository) SaveShortURL(u string, s string) error {
+	_, err := r.SQLHandler.Exec("INSERT INTO urls (short_url, original_url) VALUES ($1, $2)",
+		s, u)
+	return err
 }
 
 // FindURL queries the database for specified URL
