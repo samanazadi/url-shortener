@@ -1,11 +1,22 @@
 package utilities
 
-import "go.uber.org/zap"
+import (
+	"github.com/samanazadi/url-shortener/app/infrastructure/config"
+	"go.uber.org/zap"
+)
 
 var Logger logger
 
 func init() {
-	l, err := zap.NewDevelopment()
+	var (
+		l   *zap.Logger
+		err error
+	)
+	if config.GetBool("development") {
+		l, err = zap.NewDevelopment()
+	} else {
+		l, err = zap.NewProduction()
+	}
 	if err != nil {
 		panic(err)
 	}
