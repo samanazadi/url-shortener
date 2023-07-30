@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/samanazadi/url-shortener/app/adapters/controllers"
 	"github.com/samanazadi/url-shortener/app/infrastructure/database/postgres"
 	"github.com/samanazadi/url-shortener/app/infrastructure/router/JSON"
-	"github.com/samanazadi/url-shortener/app/interfaces/controllers"
 )
 
 // Router is main gin router
