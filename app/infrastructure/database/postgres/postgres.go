@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
+	"github.com/samanazadi/url-shortener/app/utilities"
 
 	_ "github.com/lib/pq"
 	"github.com/samanazadi/url-shortener/app/adapters/controllers"
@@ -37,7 +38,7 @@ func NewSQLHandler() controllers.SQLHandler {
 	dsn := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", dbuser, dbpass, dbhost, dbdb)
 	conn, err := sql.Open("postgres", dsn)
 	if err != nil {
-		panic(err)
+		utilities.Logger.Panic(err.Error())
 	}
 	return &PQSQLHandler{conn: conn}
 }

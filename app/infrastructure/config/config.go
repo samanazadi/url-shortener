@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/samanazadi/url-shortener/app/utilities"
 	"github.com/spf13/viper"
 )
 
@@ -8,7 +9,7 @@ func init() {
 	viper.SetConfigFile(".env")
 	err := viper.ReadInConfig()
 	if err != nil {
-		panic(err)
+		utilities.Logger.Panic(err.Error())
 	}
 }
 
