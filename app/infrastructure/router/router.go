@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/samanazadi/url-shortener/app/entities"
-	"github.com/samanazadi/url-shortener/app/infrastructure/config"
+	"github.com/samanazadi/url-shortener/app/infrastructure"
 	"net/http"
 	"time"
 
@@ -36,7 +36,7 @@ type WebURLControllerInputPort struct {
 }
 
 func (w WebURLControllerInputPort) GetMachineID() uint16 {
-	return config.GetUint16("machineid")
+	return infrastructure.Config.GetUint16("machineid")
 }
 
 // Param retrieves URL parameter p
