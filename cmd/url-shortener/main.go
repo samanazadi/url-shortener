@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
-	"github.com/samanazadi/url-shortener/configs"
+	"github.com/samanazadi/url-shortener/internal"
 	"github.com/samanazadi/url-shortener/internal/infrastructure/router"
-	"github.com/samanazadi/url-shortener/internal/logging"
-	"github.com/samanazadi/url-shortener/internal/usecases/base62"
+	"github.com/samanazadi/url-shortener/pkg/base62"
+	"github.com/samanazadi/url-shortener/pkg/logging"
 )
 
 func main() {
@@ -15,12 +15,12 @@ func main() {
 	flag.Parse()
 
 	// config
-	if err := configs.Init(cfgPath); err != nil {
+	if err := internal.Init(cfgPath); err != nil {
 		panic(err)
 	}
 
 	// logging
-	if err := logging.Init(); err != nil {
+	if err := logging.Init(internal.Config.GetBool("development")); err != nil {
 		panic(err)
 	}
 	defer func() {
@@ -31,7 +31,7 @@ func main() {
 	logging.Logger.Info("logger started")
 
 	// router
-	if err := router.Init(configs.Config.GetString("server"), configs.Config.GetString("port")); err != nil {
+	if err := router.Init(internal.Config.GetString("server"), internal.Config.GetString("port")); err != nil {
 		logging.Logger.Panic(err.Error())
 	}
 	logging.Logger.Info("router started")

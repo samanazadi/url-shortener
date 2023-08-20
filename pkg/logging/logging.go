@@ -1,18 +1,17 @@
 package logging
 
 import (
-	"github.com/samanazadi/url-shortener/configs"
 	"go.uber.org/zap"
 )
 
 var Logger logger
 
-func Init() error {
+func Init(development bool) error {
 	var (
 		l   *zap.Logger
 		err error
 	)
-	if configs.Config.GetBool("development") {
+	if development {
 		l, err = zap.NewDevelopment()
 	} else {
 		l, err = zap.NewProduction()

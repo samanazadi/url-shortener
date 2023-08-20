@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
-	"github.com/samanazadi/url-shortener/configs"
+	"github.com/samanazadi/url-shortener/internal"
 	"github.com/samanazadi/url-shortener/internal/adapters/controllers"
 )
 
@@ -29,10 +29,10 @@ func (h PQSQLHandler) Query(s string, args ...any) (controllers.Rows, error) {
 
 // NewSQLHandler creates a controllers.SQLHandler implementation for postgres
 func NewSQLHandler() (controllers.SQLHandler, error) {
-	dbuser := configs.Config.GetString("dbuser")
-	dbpass := configs.Config.GetString("dbpass")
-	dbhost := configs.Config.GetString("dbhost")
-	dbdb := configs.Config.GetString("dbdb")
+	dbuser := internal.Config.GetString("dbuser")
+	dbpass := internal.Config.GetString("dbpass")
+	dbhost := internal.Config.GetString("dbhost")
+	dbdb := internal.Config.GetString("dbdb")
 	dsn := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", dbuser, dbpass, dbhost, dbdb)
 	conn, err := sql.Open("postgres", dsn)
 	if err != nil {

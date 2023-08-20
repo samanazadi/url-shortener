@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"github.com/samanazadi/url-shortener/internal/usecases/base62"
+	"github.com/samanazadi/url-shortener/pkg/base62"
 	"github.com/samanazadi/url-shortener/pkg/entities"
 )
 
