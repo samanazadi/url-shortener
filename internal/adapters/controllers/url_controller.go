@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"errors"
-	"github.com/samanazadi/url-shortener/app/entities"
-	"github.com/samanazadi/url-shortener/app/usecases"
+	"github.com/samanazadi/url-shortener/internal/usecases"
 	"github.com/samanazadi/url-shortener/internal/utilities"
+	"github.com/samanazadi/url-shortener/pkg/entities"
 	"strconv"
 	"time"
 )

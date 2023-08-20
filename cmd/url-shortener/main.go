@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/samanazadi/url-shortener/app/infrastructure/router"
 	"github.com/samanazadi/url-shortener/configs"
+	"github.com/samanazadi/url-shortener/internal/infrastructure/router"
 	"github.com/samanazadi/url-shortener/internal/utilities"
 )
 

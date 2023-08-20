@@ -1,8 +1,8 @@
 package usecases
 
 import (
-	"github.com/samanazadi/url-shortener/app/entities"
-	"github.com/samanazadi/url-shortener/app/usecases/base62"
+	"github.com/samanazadi/url-shortener/internal/usecases/base62"
+	"github.com/samanazadi/url-shortener/pkg/entities"
 )
 
 // URLUsecase implements url fetching logic

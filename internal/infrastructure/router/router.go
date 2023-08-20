@@ -1,15 +1,15 @@
 package router
 
 import (
-	"github.com/samanazadi/url-shortener/app/entities"
 	"github.com/samanazadi/url-shortener/configs"
+	"github.com/samanazadi/url-shortener/pkg/entities"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/samanazadi/url-shortener/app/adapters/controllers"
-	"github.com/samanazadi/url-shortener/app/infrastructure/database/postgres"
-	"github.com/samanazadi/url-shortener/app/infrastructure/router/json"
+	"github.com/samanazadi/url-shortener/internal/adapters/controllers"
+	"github.com/samanazadi/url-shortener/internal/infrastructure/database/postgres"
+	"github.com/samanazadi/url-shortener/internal/infrastructure/router/json"
 )
 
 // Router is main gin router

@@ -5,6 +5,8 @@ import (
 )
 
 // charSet is the mapping used in base62 encoding
+//
+//goland:noinspection SpellCheckingInspection
 const charSet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 const baseUnixMilli int64 = 1577836800000 // time.Date(2020, time.January, 1, 0, 0, 0, 0, time.UTC).UnixMilli()

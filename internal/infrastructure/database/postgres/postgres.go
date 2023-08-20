@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
-	"github.com/samanazadi/url-shortener/app/adapters/controllers"
 	"github.com/samanazadi/url-shortener/configs"
+	"github.com/samanazadi/url-shortener/internal/adapters/controllers"
 	"github.com/samanazadi/url-shortener/internal/utilities"
 )
 
