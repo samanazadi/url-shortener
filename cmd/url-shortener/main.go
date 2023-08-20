@@ -9,7 +9,9 @@ import (
 
 func main() {
 	// config
-	configs.Init()
+	if err := configs.Init(); err != nil {
+		panic(err)
+	}
 
 	// logging
 	if err := logging.Init(); err != nil {
@@ -22,7 +24,9 @@ func main() {
 	}()
 
 	// router
-	router.Init()
+	if err := router.Init(); err != nil {
+		logging.Logger.Panic(err.Error())
+	}
 	if err := router.Router.Run(configs.Config.GetString("server") + ":" + configs.Config.GetString("port")); err != nil {
 		logging.Logger.Panic(err.Error())
 	}

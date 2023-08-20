@@ -18,7 +18,7 @@ func Init() error {
 		l, err = zap.NewProduction()
 	}
 	if err != nil {
-		panic(err)
+		return err
 	}
 	Logger = zapLogger{
 		logger: l.Sugar(),

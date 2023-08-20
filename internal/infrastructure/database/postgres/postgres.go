@@ -6,7 +6,6 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/samanazadi/url-shortener/configs"
 	"github.com/samanazadi/url-shortener/internal/adapters/controllers"
-	"github.com/samanazadi/url-shortener/internal/logging"
 )
 
 // PQSQLHandler is a special SQLHandler for postgres
@@ -29,7 +28,7 @@ func (h PQSQLHandler) Query(s string, args ...any) (controllers.Rows, error) {
 }
 
 // NewSQLHandler creates a controllers.SQLHandler implementation for postgres
-func NewSQLHandler() controllers.SQLHandler {
+func NewSQLHandler() (controllers.SQLHandler, error) {
 	dbuser := configs.Config.GetString("dbuser")
 	dbpass := configs.Config.GetString("dbpass")
 	dbhost := configs.Config.GetString("dbhost")
@@ -37,7 +36,7 @@ func NewSQLHandler() controllers.SQLHandler {
 	dsn := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", dbuser, dbpass, dbhost, dbdb)
 	conn, err := sql.Open("postgres", dsn)
 	if err != nil {
-		logging.Logger.Panic(err.Error())
+		return nil, err
 	}
-	return &PQSQLHandler{conn: conn}
+	return &PQSQLHandler{conn: conn}, nil
 }

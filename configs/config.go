@@ -6,15 +6,15 @@ import (
 
 var Config config
 
-func Init() {
+func Init() error {
 	Config = viperConfig{
 		fileName: ".env",
 	}
-	Config.init()
+	return Config.init()
 }
 
 type config interface {
-	init()
+	init() error
 	GetString(string) string
 	GetUint16(string) uint16
 	GetBool(string) bool
@@ -24,12 +24,9 @@ type viperConfig struct {
 	fileName string
 }
 
-func (v viperConfig) init() {
+func (v viperConfig) init() error {
 	viper.SetConfigFile(v.fileName)
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic(err)
-	}
+	return viper.ReadInConfig()
 }
 
 // GetString returns specified config in string
