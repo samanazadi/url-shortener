@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/samanazadi/url-shortener/configs"
 	"github.com/samanazadi/url-shortener/internal/infrastructure/router"
 	"github.com/samanazadi/url-shortener/internal/logging"
@@ -8,8 +9,13 @@ import (
 )
 
 func main() {
+	// command line flags
+	var cfgPath string //config path
+	flag.StringVar(&cfgPath, "c", ".env", "config path")
+	flag.Parse()
+
 	// config
-	if err := configs.Init(); err != nil {
+	if err := configs.Init(cfgPath); err != nil {
 		panic(err)
 	}
 

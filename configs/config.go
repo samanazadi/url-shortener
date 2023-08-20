@@ -6,9 +6,9 @@ import (
 
 var Config config
 
-func Init() error {
+func Init(cfgPath string) error {
 	Config = viperConfig{
-		fileName: ".env",
+		fileName: cfgPath,
 	}
 	return Config.init()
 }
