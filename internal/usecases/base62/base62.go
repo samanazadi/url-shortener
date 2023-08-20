@@ -15,7 +15,7 @@ var unixMilliMask int64
 var lastUnixMilli int64
 var lastSeq = uint8(0)
 
-func init() {
+func Init() {
 	for i := 0; i < 39; i++ {
 		unixMilliMask <<= 1
 		unixMilliMask++

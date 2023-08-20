@@ -6,7 +6,7 @@ import (
 
 var Config config
 
-func init() {
+func Init() {
 	Config = viperConfig{
 		fileName: ".env",
 	}

@@ -15,7 +15,7 @@ import (
 // Router is main gin router
 var Router *gin.Engine
 
-func init() {
+func Init() {
 	Router = gin.Default()
 	urlController := controllers.NewURLController(postgres.NewSQLHandler())
 
