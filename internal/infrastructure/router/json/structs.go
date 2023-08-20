@@ -1,4 +1,4 @@
-package JSON
+package json
 
 import "time"
 

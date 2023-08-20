@@ -3,11 +3,10 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
-	"github.com/samanazadi/url-shortener/app/utilities"
-
 	_ "github.com/lib/pq"
 	"github.com/samanazadi/url-shortener/app/adapters/controllers"
-	"github.com/samanazadi/url-shortener/app/infrastructure"
+	"github.com/samanazadi/url-shortener/configs"
+	"github.com/samanazadi/url-shortener/internal/utilities"
 )
 
 // PQSQLHandler is a special SQLHandler for postgres
@@ -31,10 +30,10 @@ func (h PQSQLHandler) Query(s string, args ...any) (controllers.Rows, error) {
 
 // NewSQLHandler creates a controllers.SQLHandler implementation for postgres
 func NewSQLHandler() controllers.SQLHandler {
-	dbuser := infrastructure.Config.GetString("dbuser")
-	dbpass := infrastructure.Config.GetString("dbpass")
-	dbhost := infrastructure.Config.GetString("dbhost")
-	dbdb := infrastructure.Config.GetString("dbdb")
+	dbuser := configs.Config.GetString("dbuser")
+	dbpass := configs.Config.GetString("dbpass")
+	dbhost := configs.Config.GetString("dbhost")
+	dbdb := configs.Config.GetString("dbdb")
 	dsn := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", dbuser, dbpass, dbhost, dbdb)
 	conn, err := sql.Open("postgres", dsn)
 	if err != nil {

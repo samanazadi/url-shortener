@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/samanazadi/url-shortener/app/entities"
 	"github.com/samanazadi/url-shortener/app/usecases"
-	"github.com/samanazadi/url-shortener/app/utilities"
+	"github.com/samanazadi/url-shortener/internal/utilities"
 	"strconv"
 	"time"
 )

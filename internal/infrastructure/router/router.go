@@ -2,14 +2,14 @@ package router
 
 import (
 	"github.com/samanazadi/url-shortener/app/entities"
-	"github.com/samanazadi/url-shortener/app/infrastructure"
+	"github.com/samanazadi/url-shortener/configs"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/samanazadi/url-shortener/app/adapters/controllers"
 	"github.com/samanazadi/url-shortener/app/infrastructure/database/postgres"
-	"github.com/samanazadi/url-shortener/app/infrastructure/router/JSON"
+	"github.com/samanazadi/url-shortener/app/infrastructure/router/json"
 )
 
 // Router is main gin router
@@ -36,7 +36,7 @@ type WebURLControllerInputPort struct {
 }
 
 func (w WebURLControllerInputPort) GetMachineID() uint16 {
-	return infrastructure.Config.GetUint16("machineid")
+	return configs.Config.GetUint16("machineid")
 }
 
 // Param retrieves URL parameter p
@@ -50,16 +50,16 @@ func (w WebURLControllerInputPort) Param(param string) string {
 
 // OutputVisitDetails returns result JSON to client
 func (w WebURLControllerInputPort) OutputVisitDetails(u string, v []entities.VisitDetail, total int) {
-	vds := make([]JSON.VisitDetail, 0)
+	vds := make([]json.VisitDetail, 0)
 	for _, vd := range v {
-		vds = append(vds, JSON.VisitDetail{
+		vds = append(vds, json.VisitDetail{
 			IP:        vd.IP,
 			Time:      vd.Time,
 			UserAgent: vd.UserAgent,
 		})
 	}
 
-	res := JSON.SuccessRetrieval{
+	res := json.SuccessRetrieval{
 		Message:      "Successful",
 		OriginalURL:  u,
 		Total:        total,
@@ -69,7 +69,7 @@ func (w WebURLControllerInputPort) OutputVisitDetails(u string, v []entities.Vis
 }
 
 func (w WebURLControllerInputPort) OutputShortURL(shortURL string) {
-	res := JSON.SuccessShortURLCreated{
+	res := json.SuccessShortURLCreated{
 		Message:  "Successful",
 		ShortURL: shortURL,
 	}
@@ -84,7 +84,7 @@ func (w WebURLControllerInputPort) Redirect(u string) {
 func (w WebURLControllerInputPort) OutputError(op int, err error) {
 	switch op {
 	case controllers.URLNotFound:
-		j := JSON.MessageError{
+		j := json.MessageError{
 			Message: "Unsuccessful",
 			Error:   err.Error(),
 		}
@@ -92,13 +92,13 @@ func (w WebURLControllerInputPort) OutputError(op int, err error) {
 	case controllers.RedirectToHomePage:
 		w.c.Redirect(http.StatusFound, "/")
 	case controllers.CannotCreateShortLink:
-		j := JSON.MessageError{
+		j := json.MessageError{
 			Message: "Unsuccessful",
 			Error:   err.Error(),
 		}
 		w.c.IndentedJSON(http.StatusInternalServerError, j)
 	case controllers.BadRequest:
-		j := JSON.MessageError{
+		j := json.MessageError{
 			Message: "Bad Request",
 			Error:   err.Error(),
 		}
@@ -115,7 +115,7 @@ func (w WebURLControllerInputPort) GetVisitDetail() entities.VisitDetail {
 }
 
 func (w WebURLControllerInputPort) GetCreateShortURLRequest() (string, error) {
-	var reqBody JSON.CreateShortURLRequestBody
+	var reqBody json.CreateShortURLRequestBody
 	err := w.c.BindJSON(&reqBody)
 	return reqBody.URL, err
 }

@@ -1,4 +1,4 @@
-package infrastructure
+package configs
 
 import (
 	"github.com/spf13/viper"
