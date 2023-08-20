@@ -28,6 +28,7 @@ func main() {
 			panic(err)
 		}
 	}()
+	logging.Logger.Info("logger started")
 
 	// router
 	if err := router.Init(); err != nil {
@@ -36,7 +37,9 @@ func main() {
 	if err := router.Router.Run(configs.Config.GetString("server") + ":" + configs.Config.GetString("port")); err != nil {
 		logging.Logger.Panic(err.Error())
 	}
+	logging.Logger.Info("router started")
 
 	// base62
 	base62.Init()
+	logging.Logger.Info("algorithms initialized")
 }
