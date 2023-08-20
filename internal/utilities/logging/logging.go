@@ -1,4 +1,4 @@
-package utilities
+package logging
 
 import (
 	"github.com/samanazadi/url-shortener/configs"
@@ -7,7 +7,7 @@ import (
 
 var Logger logger
 
-func init() {
+func Init() error {
 	var (
 		l   *zap.Logger
 		err error
@@ -20,10 +20,10 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	defer l.Sync()
 	Logger = zapLogger{
 		logger: l.Sugar(),
 	}
+	return l.Sync()
 }
 
 type logger interface {
@@ -34,7 +34,7 @@ type logger interface {
 	DPanic(msg string, p ...any) // panics in development mode
 	Panic(msg string, p ...any)  // logs then panics
 	Fatal(msg string, p ...any)  // logs then calls os.Exit(1)
-	Sync()
+	Sync() error
 }
 
 type zapLogger struct {
@@ -69,6 +69,6 @@ func (l zapLogger) Fatal(msg string, p ...any) {
 	l.logger.Fatalw(msg, p...)
 }
 
-func (l zapLogger) Sync() {
-	l.logger.Sync()
+func (l zapLogger) Sync() error {
+	return l.logger.Sync()
 }

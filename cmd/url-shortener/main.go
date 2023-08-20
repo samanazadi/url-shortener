@@ -3,14 +3,22 @@ package main
 import (
 	"github.com/samanazadi/url-shortener/configs"
 	"github.com/samanazadi/url-shortener/internal/infrastructure/router"
-	"github.com/samanazadi/url-shortener/internal/utilities"
+	"github.com/samanazadi/url-shortener/internal/utilities/logging"
 )
 
 func main() {
-	defer utilities.Logger.Sync()
-	err := router.Router.Run(
-		configs.Config.GetString("server") + ":" + configs.Config.GetString("port"))
-	if err != nil {
-		utilities.Logger.Panic(err.Error())
+	// logging
+	if err := logging.Init(); err != nil {
+		panic(err)
+	}
+	defer func() {
+		if err := logging.Logger.Sync(); err != nil {
+			panic(err)
+		}
+	}()
+
+	// router
+	if err := router.Router.Run(configs.Config.GetString("server") + ":" + configs.Config.GetString("port")); err != nil {
+		logging.Logger.Panic(err.Error())
 	}
 }

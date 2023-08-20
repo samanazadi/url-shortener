@@ -3,7 +3,7 @@ package controllers
 import (
 	"errors"
 	"github.com/samanazadi/url-shortener/internal/usecases"
-	"github.com/samanazadi/url-shortener/internal/utilities"
+	"github.com/samanazadi/url-shortener/internal/utilities/logging"
 	"github.com/samanazadi/url-shortener/pkg/entities"
 	"strconv"
 	"time"
@@ -30,24 +30,24 @@ func (u URLController) GetDetails(p URLControllerInputPort) {
 	shortURL := p.Param("id")
 	offset, err := AtoIWithDefault(p.Param("offset"), 0)
 	if err != nil {
-		utilities.Logger.Warn(err.Error(), "param", "offset", "original_param", p.Param("offset"))
+		logging.Logger.Warn(err.Error(), "param", "offset", "original_param", p.Param("offset"))
 	}
 	limit, err := AtoIWithDefault(p.Param("limit"), 10)
 	if err != nil {
-		utilities.Logger.Warn(err.Error(), "param", "limit", "original_param", p.Param("limit"))
+		logging.Logger.Warn(err.Error(), "param", "limit", "original_param", p.Param("limit"))
 	}
 	originalURL, err := u.urlUseCase.OriginalURL(shortURL)
 	if err != nil {
-		utilities.Logger.Warn(err.Error(), "short_url", shortURL)
+		logging.Logger.Warn(err.Error(), "short_url", shortURL)
 		p.OutputError(URLNotFound, err)
 		return
 	}
 	vds, total, err := u.urlUseCase.Visits(shortURL, offset, limit)
 	if err != nil {
-		utilities.Logger.Error(err.Error(), "short_url", shortURL)
+		logging.Logger.Error(err.Error(), "short_url", shortURL)
 	}
 
-	utilities.Logger.Debug("visit details returned successfully",
+	logging.Logger.Debug("visit details returned successfully",
 		"short_url", shortURL, "offset", offset, "limit", limit)
 	p.OutputVisitDetails(originalURL, vds, total)
 }
@@ -56,17 +56,17 @@ func (u URLController) GetDetails(p URLControllerInputPort) {
 func (u URLController) CreateShortLink(p URLControllerInputPort) {
 	originalURL, err := p.GetCreateShortURLRequest()
 	if err != nil {
-		utilities.Logger.Warn(err.Error())
+		logging.Logger.Warn(err.Error())
 		p.OutputError(BadRequest, err)
 		return
 	}
 	shortURL, err := u.urlUseCase.SaveURL(originalURL, p.GetMachineID())
 	if err != nil {
-		utilities.Logger.Error(err.Error())
+		logging.Logger.Error(err.Error())
 		p.OutputError(CannotCreateShortLink, err)
 		return
 	}
-	utilities.Logger.Debug("Short url created", "short_url", shortURL, "original_url", originalURL)
+	logging.Logger.Debug("Short url created", "short_url", shortURL, "original_url", originalURL)
 	p.OutputShortURL(shortURL)
 }
 
@@ -75,7 +75,7 @@ func (u URLController) RedirectToOriginalURL(p URLControllerInputPort) {
 	shortURL := p.Param("id")
 	originalURL, err := u.urlUseCase.OriginalURL(shortURL)
 	if err != nil {
-		utilities.Logger.Warn("Short url not found", "short_url", shortURL)
+		logging.Logger.Warn("Short url not found", "short_url", shortURL)
 		p.OutputError(RedirectToHomePage, err)
 		return
 	}
@@ -83,9 +83,9 @@ func (u URLController) RedirectToOriginalURL(p URLControllerInputPort) {
 	vd.ShortURL = shortURL
 	err = u.urlUseCase.SaveVisitDetail(vd)
 	if err != nil {
-		utilities.Logger.Error("Cannot save visit details: "+err.Error(), "short_url", shortURL)
+		logging.Logger.Error("Cannot save visit details: "+err.Error(), "short_url", shortURL)
 	}
-	utilities.Logger.Debug("Redirect successful", "short_url", shortURL, "original_url", originalURL)
+	logging.Logger.Debug("Redirect successful", "short_url", shortURL, "original_url", originalURL)
 	p.Redirect(originalURL)
 }
 
