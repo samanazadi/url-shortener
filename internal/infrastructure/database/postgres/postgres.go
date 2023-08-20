@@ -6,7 +6,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/samanazadi/url-shortener/configs"
 	"github.com/samanazadi/url-shortener/internal/adapters/controllers"
-	"github.com/samanazadi/url-shortener/internal/utilities/logging"
+	"github.com/samanazadi/url-shortener/internal/logging"
 )
 
 // PQSQLHandler is a special SQLHandler for postgres

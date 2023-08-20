@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"errors"
+	"github.com/samanazadi/url-shortener/internal/logging"
 	"github.com/samanazadi/url-shortener/internal/usecases"
-	"github.com/samanazadi/url-shortener/internal/utilities/logging"
 	"github.com/samanazadi/url-shortener/pkg/entities"
 	"strconv"
 	"time"

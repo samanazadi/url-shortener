@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/samanazadi/url-shortener/configs"
 	"github.com/samanazadi/url-shortener/internal/infrastructure/router"
+	"github.com/samanazadi/url-shortener/internal/logging"
 	"github.com/samanazadi/url-shortener/internal/usecases/base62"
-	"github.com/samanazadi/url-shortener/internal/utilities/logging"
 )
 
 func main() {
