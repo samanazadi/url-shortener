@@ -15,7 +15,7 @@ import (
 // Router is main gin router
 var Router *gin.Engine
 
-func Init() error {
+func Init(server, port string) error {
 	Router = gin.Default()
 	handler, err := postgres.NewSQLHandler()
 	if err != nil {
@@ -32,7 +32,8 @@ func Init() error {
 	Router.GET("/:id", func(c *gin.Context) {
 		urlController.RedirectToOriginalURL(WebURLControllerInputPort{c: c})
 	})
-	return nil
+
+	return Router.Run(server + ":" + port)
 }
 
 // WebURLControllerInputPort implements controllers.URLControllerInputPort

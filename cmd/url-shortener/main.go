@@ -31,10 +31,7 @@ func main() {
 	logging.Logger.Info("logger started")
 
 	// router
-	if err := router.Init(); err != nil {
-		logging.Logger.Panic(err.Error())
-	}
-	if err := router.Router.Run(configs.Config.GetString("server") + ":" + configs.Config.GetString("port")); err != nil {
+	if err := router.Init(configs.Config.GetString("server"), configs.Config.GetString("port")); err != nil {
 		logging.Logger.Panic(err.Error())
 	}
 	logging.Logger.Info("router started")
