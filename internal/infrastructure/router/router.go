@@ -24,7 +24,7 @@ func Init(cfg *config.Config) error {
 	urlController := controllers.NewURLController(handler)
 
 	Router.GET("/u/:id", func(c *gin.Context) {
-		urlController.GetDetails(WebURLControllerInputPort{c: c})
+		urlController.GetDetails(WebURLControllerInputPort{c: c}, cfg)
 	})
 	Router.POST("/u", func(c *gin.Context) {
 		urlController.CreateShortLink(WebURLControllerInputPort{c: c}, cfg)

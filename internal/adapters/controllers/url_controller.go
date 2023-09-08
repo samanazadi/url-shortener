@@ -26,10 +26,10 @@ func NewURLController(h SQLHandler) *URLController {
 }
 
 // GetDetails retrieves the original input
-func (u URLController) GetDetails(p URLControllerInputPort) {
+func (u URLController) GetDetails(p URLControllerInputPort, cfg *config.Config) {
 	shortURL := p.Param("id")
 	offset := AtoIWithDefault(p.Param("offset"), 0)
-	limit := AtoIWithDefault(p.Param("limit"), 10)
+	limit := AtoIWithDefault(p.Param("limit"), cfg.DefaultLimit)
 	originalURL, err := u.urlUseCase.OriginalURL(shortURL)
 	if err != nil {
 		logging.Logger.Warn(err.Error(), "short_url", shortURL)

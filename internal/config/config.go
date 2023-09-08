@@ -5,14 +5,15 @@ import (
 )
 
 type Config struct {
-	Host        string
-	Port        string
-	MachineID   int
-	Development bool
-	DBUser      string
-	DBPass      string
-	DBHost      string
-	DBName      string
+	Host         string
+	Port         string
+	MachineID    int
+	Development  bool
+	DefaultLimit int
+	DBUser       string
+	DBPass       string
+	DBHost       string
+	DBName       string
 }
 
 func New(cfgPath string) (*Config, error) {
