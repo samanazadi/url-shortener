@@ -31,11 +31,7 @@ func main() {
 	if err := logging.Init(cfg); err != nil {
 		panic(err)
 	}
-	defer func() {
-		if err := logging.Logger.Sync(); err != nil {
-			panic(err)
-		}
-	}()
+	defer logging.Logger.Sync()
 	logging.Logger.Info("logger started")
 
 	// base62
