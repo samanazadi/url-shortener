@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"errors"
 	"github.com/samanazadi/url-shortener/internal/usecases"
 	"github.com/samanazadi/url-shortener/pkg/entities"
 	"github.com/samanazadi/url-shortener/pkg/logging"
@@ -28,14 +27,8 @@ func NewURLController(h SQLHandler) *URLController {
 // GetDetails retrieves the original input
 func (u URLController) GetDetails(p URLControllerInputPort) {
 	shortURL := p.Param("id")
-	offset, err := AtoIWithDefault(p.Param("offset"), 0)
-	if err != nil {
-		logging.Logger.Warn(err.Error(), "param", "offset", "original_param", p.Param("offset"))
-	}
-	limit, err := AtoIWithDefault(p.Param("limit"), 10)
-	if err != nil {
-		logging.Logger.Warn(err.Error(), "param", "limit", "original_param", p.Param("limit"))
-	}
+	offset := AtoIWithDefault(p.Param("offset"), 0)
+	limit := AtoIWithDefault(p.Param("limit"), 10)
 	originalURL, err := u.urlUseCase.OriginalURL(shortURL)
 	if err != nil {
 		logging.Logger.Warn(err.Error(), "short_url", shortURL)
@@ -193,13 +186,10 @@ func (r URLControllerRepository) TotalVisits(u string) int {
 	return total
 }
 
-func AtoIWithDefault(s string, d int) (int, error) {
-	if s == "" {
-		return d, errors.New("empty string")
-	}
+func AtoIWithDefault(s string, d int) int {
 	i, err := strconv.Atoi(s)
 	if err != nil {
-		return d, err
+		return d
 	}
-	return i, nil
+	return i
 }
