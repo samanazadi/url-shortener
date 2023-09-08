@@ -12,28 +12,25 @@ import (
 	"github.com/samanazadi/url-shortener/internal/infrastructure/router/json"
 )
 
-// Router is main gin router
-var Router *gin.Engine
-
-func Init(cfg *config.Config) error {
-	Router = gin.Default()
+func New(cfg *config.Config) (*gin.Engine, error) {
+	router := gin.Default()
 	handler, err := postgres.NewSQLHandler(cfg)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	urlController := controllers.NewURLController(handler)
 
-	Router.GET("/u/:id", func(c *gin.Context) {
+	router.GET("/u/:id", func(c *gin.Context) {
 		urlController.GetDetails(WebURLControllerInputPort{c: c}, cfg)
 	})
-	Router.POST("/u", func(c *gin.Context) {
+	router.POST("/u", func(c *gin.Context) {
 		urlController.CreateShortLink(WebURLControllerInputPort{c: c}, cfg)
 	})
-	Router.GET("/:id", func(c *gin.Context) {
+	router.GET("/:id", func(c *gin.Context) {
 		urlController.RedirectToOriginalURL(WebURLControllerInputPort{c: c})
 	})
 
-	return Router.Run(cfg.Host + ":" + cfg.Port)
+	return router, nil
 }
 
 // WebURLControllerInputPort implements controllers.URLControllerInputPort
