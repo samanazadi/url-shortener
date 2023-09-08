@@ -13,6 +13,7 @@ var unixMilliMask int64
 var lastUnixMilli int64
 var lastSeq = uint8(0)
 
+// Init initialized the package
 func Init() {
 	for i := 0; i < 39; i++ {
 		unixMilliMask <<= 1
@@ -39,7 +40,7 @@ func makeInt64(unixMilli int64, machineID uint16, seq uint8) int64 {
 	return id
 }
 
-// GenerateID creates new ID
+// GenerateID creates new ID based on machine ID
 func GenerateID(machineID uint16) string {
 	um := time.Now().UnixMilli()
 	var seq uint8
