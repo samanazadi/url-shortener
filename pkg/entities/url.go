@@ -4,7 +4,7 @@ import "time"
 
 // URL is a URL and its corresponding original URL
 type URL struct {
-	URL         string
+	ShortURL    string
 	OriginalURL string
 }
 

@@ -152,7 +152,7 @@ func (r URLControllerRepository) FindURL(u string) (entities.URL, error) {
 	if err != nil {
 		return entities.URL{}, err
 	}
-	return entities.URL{URL: shortURL, OriginalURL: originalURL}, nil
+	return entities.URL{ShortURL: shortURL, OriginalURL: originalURL}, nil
 }
 
 func (r URLControllerRepository) SaveVisitDetail(vd entities.VisitDetail) error {
