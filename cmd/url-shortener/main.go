@@ -13,7 +13,7 @@ func main() {
 	// command line flags
 	cfgPath := pflag.StringP("config", "c", ".env", "config file path")
 	pflag.Parse()
-	fmt.Printf("config file: %s", *cfgPath)
+	fmt.Printf("config file: %s\n", *cfgPath)
 
 	// config
 	cfg, err := config.New(*cfgPath)
