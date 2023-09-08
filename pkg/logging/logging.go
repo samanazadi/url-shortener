@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var Logger logger
+var Logger Log
 
 func Init(cfg *config.Config) error {
 	var (
@@ -26,7 +26,7 @@ func Init(cfg *config.Config) error {
 	return nil
 }
 
-type logger interface {
+type Log interface {
 	Debug(msg string, p ...any)
 	Info(msg string, p ...any)
 	Warn(msg string, p ...any)
