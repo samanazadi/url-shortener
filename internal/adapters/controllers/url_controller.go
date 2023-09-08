@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/samanazadi/url-shortener/internal/config"
 	"github.com/samanazadi/url-shortener/internal/usecases"
 	"github.com/samanazadi/url-shortener/pkg/entities"
 	"github.com/samanazadi/url-shortener/pkg/logging"
@@ -46,14 +47,14 @@ func (u URLController) GetDetails(p URLControllerInputPort) {
 }
 
 // CreateShortLink create a short link for the URL in request
-func (u URLController) CreateShortLink(p URLControllerInputPort) {
+func (u URLController) CreateShortLink(p URLControllerInputPort, cfg *config.Config) {
 	originalURL, err := p.GetCreateShortURLRequest()
 	if err != nil {
 		logging.Logger.Warn(err.Error())
 		p.OutputError(BadRequest, err)
 		return
 	}
-	shortURL, err := u.urlUseCase.SaveURL(originalURL, p.GetMachineID())
+	shortURL, err := u.urlUseCase.SaveURL(originalURL, uint16(cfg.MachineID))
 	if err != nil {
 		logging.Logger.Error(err.Error())
 		p.OutputError(CannotCreateShortLink, err)
@@ -94,7 +95,6 @@ const (
 // URLControllerInputPort will be injected by infrastructure layer
 type URLControllerInputPort interface {
 	Param(string) string
-	GetMachineID() uint16
 	GetCreateShortURLRequest() (string, error)
 	GetVisitDetail() entities.VisitDetail
 	OutputShortURL(string)

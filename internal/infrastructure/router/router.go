@@ -24,13 +24,13 @@ func Init(cfg *config.Config) error {
 	urlController := controllers.NewURLController(handler)
 
 	Router.GET("/u/:id", func(c *gin.Context) {
-		urlController.GetDetails(WebURLControllerInputPort{c: c, cfg: cfg})
+		urlController.GetDetails(WebURLControllerInputPort{c: c})
 	})
 	Router.POST("/u", func(c *gin.Context) {
-		urlController.CreateShortLink(WebURLControllerInputPort{c: c, cfg: cfg})
+		urlController.CreateShortLink(WebURLControllerInputPort{c: c}, cfg)
 	})
 	Router.GET("/:id", func(c *gin.Context) {
-		urlController.RedirectToOriginalURL(WebURLControllerInputPort{c: c, cfg: cfg})
+		urlController.RedirectToOriginalURL(WebURLControllerInputPort{c: c})
 	})
 
 	return Router.Run(cfg.Host + ":" + cfg.Port)
@@ -38,12 +38,7 @@ func Init(cfg *config.Config) error {
 
 // WebURLControllerInputPort implements controllers.URLControllerInputPort
 type WebURLControllerInputPort struct {
-	c   *gin.Context
-	cfg *config.Config
-}
-
-func (w WebURLControllerInputPort) GetMachineID() uint16 {
-	return uint16(w.cfg.MachineID)
+	c *gin.Context
 }
 
 // Param retrieves URL parameter p
