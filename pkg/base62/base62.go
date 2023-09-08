@@ -45,11 +45,11 @@ func GenerateID(machineID uint16) string {
 	var seq uint8
 	if lastUnixMilli/10 != um/10 {
 		lastSeq = 0 // restart seq
-		seq = 0
 	} else {
 		lastSeq++
-		seq = lastSeq
 	}
+	seq = lastSeq
+
 	lastUnixMilli = um
 
 	return int64ToString(makeInt64(um, machineID, seq))
