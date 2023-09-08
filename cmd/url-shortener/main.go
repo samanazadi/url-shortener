@@ -1,26 +1,28 @@
 package main
 
 import (
-	"flag"
-	"github.com/samanazadi/url-shortener/internal"
+	"fmt"
+	"github.com/samanazadi/url-shortener/internal/config"
 	"github.com/samanazadi/url-shortener/internal/infrastructure/router"
 	"github.com/samanazadi/url-shortener/pkg/base62"
 	"github.com/samanazadi/url-shortener/pkg/logging"
+	"github.com/spf13/pflag"
 )
 
 func main() {
 	// command line flags
-	var cfgPath string //config path
-	flag.StringVar(&cfgPath, "c", ".env", "config path")
-	flag.Parse()
+	cfgPath := pflag.StringP("config", "c", ".env", "config file path")
+	pflag.Parse()
+	fmt.Printf("config file: %s", *cfgPath)
 
 	// config
-	if err := internal.Init(cfgPath); err != nil {
+	cfg, err := config.New(*cfgPath)
+	if err != nil {
 		panic(err)
 	}
 
 	// logging
-	if err := logging.Init(internal.Config.GetBool("development")); err != nil {
+	if err := logging.Init(cfg); err != nil {
 		panic(err)
 	}
 	defer func() {
@@ -31,7 +33,7 @@ func main() {
 	logging.Logger.Info("logger started")
 
 	// router
-	if err := router.Init(internal.Config.GetString("server"), internal.Config.GetString("port")); err != nil {
+	if err := router.Init(cfg); err != nil {
 		logging.Logger.Panic(err.Error())
 	}
 	logging.Logger.Info("router started")

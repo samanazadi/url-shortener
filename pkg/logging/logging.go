@@ -1,17 +1,18 @@
 package logging
 
 import (
+	"github.com/samanazadi/url-shortener/internal/config"
 	"go.uber.org/zap"
 )
 
 var Logger logger
 
-func Init(development bool) error {
+func Init(cfg *config.Config) error {
 	var (
 		l   *zap.Logger
 		err error
 	)
-	if development {
+	if cfg.Development {
 		l, err = zap.NewDevelopment()
 	} else {
 		l, err = zap.NewProduction()
@@ -22,7 +23,7 @@ func Init(development bool) error {
 	Logger = zapLogger{
 		logger: l.Sugar(),
 	}
-	return l.Sync()
+	return nil
 }
 
 type logger interface {

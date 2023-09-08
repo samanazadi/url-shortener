@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/samanazadi/url-shortener/internal"
+	"github.com/samanazadi/url-shortener/internal/config"
 	"github.com/samanazadi/url-shortener/pkg/entities"
 	"net/http"
 	"time"
@@ -15,34 +15,35 @@ import (
 // Router is main gin router
 var Router *gin.Engine
 
-func Init(server, port string) error {
+func Init(cfg *config.Config) error {
 	Router = gin.Default()
-	handler, err := postgres.NewSQLHandler()
+	handler, err := postgres.NewSQLHandler(cfg)
 	if err != nil {
 		return err
 	}
 	urlController := controllers.NewURLController(handler)
 
 	Router.GET("/u/:id", func(c *gin.Context) {
-		urlController.GetDetails(WebURLControllerInputPort{c: c})
+		urlController.GetDetails(WebURLControllerInputPort{c: c, cfg: cfg})
 	})
 	Router.POST("/u", func(c *gin.Context) {
-		urlController.CreateShortLink(WebURLControllerInputPort{c: c})
+		urlController.CreateShortLink(WebURLControllerInputPort{c: c, cfg: cfg})
 	})
 	Router.GET("/:id", func(c *gin.Context) {
-		urlController.RedirectToOriginalURL(WebURLControllerInputPort{c: c})
+		urlController.RedirectToOriginalURL(WebURLControllerInputPort{c: c, cfg: cfg})
 	})
 
-	return Router.Run(server + ":" + port)
+	return Router.Run(cfg.Host + ":" + cfg.Port)
 }
 
 // WebURLControllerInputPort implements controllers.URLControllerInputPort
 type WebURLControllerInputPort struct {
-	c *gin.Context
+	c   *gin.Context
+	cfg *config.Config
 }
 
 func (w WebURLControllerInputPort) GetMachineID() uint16 {
-	return internal.Config.GetUint16("machineid")
+	return uint16(w.cfg.MachineID)
 }
 
 // Param retrieves URL parameter p
