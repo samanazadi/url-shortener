@@ -6,6 +6,7 @@ import (
 
 var Logger Log
 
+// Init initializes the package
 func Init(development bool) error {
 	var (
 		l   *zap.Logger
@@ -25,6 +26,7 @@ func Init(development bool) error {
 	return nil
 }
 
+// Log is the logging interface which must be implemented by loggers.
 type Log interface {
 	Debug(msg string, p ...any)
 	Info(msg string, p ...any)
@@ -40,34 +42,42 @@ type zapLogger struct {
 	logger *zap.SugaredLogger
 }
 
+// Debug prints a debug level log
 func (l zapLogger) Debug(msg string, p ...any) {
 	l.logger.Debugw(msg, p...)
 }
 
+// Info prints a info level log
 func (l zapLogger) Info(msg string, p ...any) {
 	l.logger.Infow(msg, p...)
 }
 
+// Warn prints a warn level log
 func (l zapLogger) Warn(msg string, p ...any) {
 	l.logger.Warnw(msg, p...)
 }
 
+// Error prints a error level log
 func (l zapLogger) Error(msg string, p ...any) {
 	l.logger.Errorw(msg, p...)
 }
 
+// DPanic prints a message and then only in development panics.
 func (l zapLogger) DPanic(msg string, p ...any) {
 	l.logger.DPanicw(msg, p...)
 }
 
+// Panic prints a message and then panics.
 func (l zapLogger) Panic(msg string, p ...any) {
 	l.logger.Panicw(msg, p...)
 }
 
+// Fatal prints a message and then calls os.Exit.
 func (l zapLogger) Fatal(msg string, p ...any) {
 	l.logger.Fatalw(msg, p...)
 }
 
+// Sync flushes any buffered log entries.
 func (l zapLogger) Sync() error {
 	return l.logger.Sync()
 }
