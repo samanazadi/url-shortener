@@ -1,18 +1,17 @@
 package logging
 
 import (
-	"github.com/samanazadi/url-shortener/internal/config"
 	"go.uber.org/zap"
 )
 
 var Logger Log
 
-func Init(cfg *config.Config) error {
+func Init(development bool) error {
 	var (
 		l   *zap.Logger
 		err error
 	)
-	if cfg.Development {
+	if development {
 		l, err = zap.NewDevelopment()
 	} else {
 		l, err = zap.NewProduction()
