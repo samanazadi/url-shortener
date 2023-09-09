@@ -12,11 +12,11 @@ import (
 	"github.com/samanazadi/url-shortener/internal/infrastructure/router/json"
 )
 
-func New(cfg *config.Config) (*gin.Engine, error) {
+func New(cfg *config.Config) (*gin.Engine, controllers.SQLHandler, error) {
 	router := gin.Default()
 	handler, err := postgres.NewSQLHandler(cfg)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	urlController := controllers.NewURLController(handler)
 
@@ -30,7 +30,7 @@ func New(cfg *config.Config) (*gin.Engine, error) {
 		urlController.RedirectToOriginalURL(c, WebURLControllerInputPort{c: c})
 	})
 
-	return router, nil
+	return router, handler, nil
 }
 
 // WebURLControllerInputPort implements controllers.URLControllerInputPort

@@ -39,7 +39,7 @@ func main() {
 	logging.Logger.Info("algorithms initialized")
 
 	// router
-	rtr, err := router.New(cfg)
+	rtr, handler, err := router.New(cfg)
 	if err != nil {
 		logging.Logger.Panic(err.Error())
 	}
@@ -59,6 +59,8 @@ func main() {
 	}()
 
 	// graceful shutdown
+	doneSQLHandler := make(chan bool, 1)
+	defer close(doneSQLHandler)
 	sigs := make(chan os.Signal)
 	defer close(sigs)
 
@@ -66,8 +68,19 @@ func main() {
 	<-sigs
 	logging.Logger.Info("starting server shutdown ...")
 
+	go func() {
+		if err := handler.Close(); err != nil {
+			logging.Logger.Error("cannot close SQL handler", "error", err)
+		} else {
+			logging.Logger.Info("SQL handler closed")
+		}
+		doneSQLHandler <- true
+	}()
+
 	if err := server.Shutdown(context.Background()); err != nil {
 		logging.Logger.Panic("server Shutdown", "error", err)
 	}
+
+	<-doneSQLHandler // wait for SQL handler to shut down
 	logging.Logger.Info("server stopped")
 }

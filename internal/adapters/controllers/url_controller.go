@@ -109,6 +109,7 @@ type SQLHandler interface {
 	ExecContext(context.Context, string, ...any) (Result, error)
 	QueryRowContext(context.Context, string, ...any) Row
 	QueryContext(context.Context, string, ...any) (Rows, error)
+	Close() error
 }
 
 // Result is a SQL Exec result

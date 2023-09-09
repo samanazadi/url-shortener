@@ -26,6 +26,10 @@ func (h PQSQLHandler) QueryContext(ctx context.Context, s string, args ...any) (
 	return h.conn.QueryContext(ctx, s, args...)
 }
 
+func (h PQSQLHandler) Close() error {
+	return h.conn.Close()
+}
+
 // NewSQLHandler creates a controllers.SQLHandler implementation for postgres
 func NewSQLHandler(cfg *config.Config) (controllers.SQLHandler, error) {
 	dbuser := cfg.DBUser
