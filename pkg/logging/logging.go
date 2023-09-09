@@ -4,15 +4,19 @@ import (
 	"go.uber.org/zap"
 )
 
+type Options struct {
+	Development bool
+}
+
 var Logger Log
 
 // Init initializes the package
-func Init(development bool) error {
+func Init(opt Options) error {
 	var (
 		l   *zap.Logger
 		err error
 	)
-	if development {
+	if opt.Development {
 		l, err = zap.NewDevelopment()
 	} else {
 		l, err = zap.NewProduction()

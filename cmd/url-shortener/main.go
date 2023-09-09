@@ -28,7 +28,7 @@ func main() {
 	}
 
 	// logging
-	if err := logging.Init(cfg.Development); err != nil {
+	if err := logging.Init(logging.Options{Development: cfg.Development}); err != nil {
 		panic(err)
 	}
 	defer logging.Logger.Sync()
