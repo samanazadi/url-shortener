@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
@@ -13,18 +14,16 @@ type PQSQLHandler struct {
 	conn *sql.DB
 }
 
-// Exec uses Exec on postgres
-func (h PQSQLHandler) Exec(s string, args ...any) (controllers.Result, error) {
-	return h.conn.Exec(s, args...)
+func (h PQSQLHandler) ExecContext(ctx context.Context, s string, args ...any) (controllers.Result, error) {
+	return h.conn.ExecContext(ctx, s, args...)
 }
 
-// QueryRow uses QueryRow on postgres
-func (h PQSQLHandler) QueryRow(s string, args ...any) controllers.Row {
-	return h.conn.QueryRow(s, args...)
+func (h PQSQLHandler) QueryRowContext(ctx context.Context, s string, args ...any) controllers.Row {
+	return h.conn.QueryRowContext(ctx, s, args...)
 }
 
-func (h PQSQLHandler) Query(s string, args ...any) (controllers.Rows, error) {
-	return h.conn.Query(s, args...)
+func (h PQSQLHandler) QueryContext(ctx context.Context, s string, args ...any) (controllers.Rows, error) {
+	return h.conn.QueryContext(ctx, s, args...)
 }
 
 // NewSQLHandler creates a controllers.SQLHandler implementation for postgres

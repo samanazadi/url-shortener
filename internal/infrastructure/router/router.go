@@ -21,13 +21,13 @@ func New(cfg *config.Config) (*gin.Engine, error) {
 	urlController := controllers.NewURLController(handler)
 
 	router.GET("/u/:id", func(c *gin.Context) {
-		urlController.GetDetails(WebURLControllerInputPort{c: c}, cfg)
+		urlController.GetDetails(c, WebURLControllerInputPort{c: c}, cfg)
 	})
 	router.POST("/u", func(c *gin.Context) {
-		urlController.CreateShortLink(WebURLControllerInputPort{c: c}, cfg)
+		urlController.CreateShortLink(c, WebURLControllerInputPort{c: c}, cfg)
 	})
 	router.GET("/:id", func(c *gin.Context) {
-		urlController.RedirectToOriginalURL(WebURLControllerInputPort{c: c})
+		urlController.RedirectToOriginalURL(c, WebURLControllerInputPort{c: c})
 	})
 
 	return router, nil

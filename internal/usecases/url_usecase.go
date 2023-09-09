@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"context"
 	"github.com/samanazadi/url-shortener/pkg/base62"
 	"github.com/samanazadi/url-shortener/pkg/entities"
 )
@@ -11,37 +12,37 @@ type URLUsecase struct {
 }
 
 // OriginalURL returns original URL or an error
-func (u URLUsecase) OriginalURL(url string) (string, error) {
-	ue, err := u.URLRepository.FindURL(url)
+func (u URLUsecase) OriginalURL(ctx context.Context, url string) (string, error) {
+	ue, err := u.URLRepository.FindURL(ctx, url)
 	if err != nil {
 		return "", err
 	}
 	return ue.OriginalURL, nil
 }
 
-func (u URLUsecase) SaveURL(url string, machineID uint16) (string, error) {
+func (u URLUsecase) SaveURL(ctx context.Context, url string, machineID uint16) (string, error) {
 	shortURL := base62.GenerateID(machineID)
-	if err := u.URLRepository.SaveShortURL(url, shortURL); err != nil {
+	if err := u.URLRepository.SaveShortURL(ctx, url, shortURL); err != nil {
 		return "", nil
 	}
 	return shortURL, nil
 }
 
-func (u URLUsecase) SaveVisitDetail(vd entities.VisitDetail) error {
-	return u.URLRepository.SaveVisitDetail(vd)
+func (u URLUsecase) SaveVisitDetail(ctx context.Context, vd entities.VisitDetail) error {
+	return u.URLRepository.SaveVisitDetail(ctx, vd)
 }
 
-func (u URLUsecase) Visits(url string, offset int, limit int) ([]entities.VisitDetail, int, error) {
-	total := u.URLRepository.TotalVisits(url)
-	vds, err := u.URLRepository.FindVisits(url, offset, limit)
+func (u URLUsecase) Visits(ctx context.Context, url string, offset int, limit int) ([]entities.VisitDetail, int, error) {
+	total := u.URLRepository.TotalVisits(ctx, url)
+	vds, err := u.URLRepository.FindVisits(ctx, url, offset, limit)
 	return vds, total, err
 }
 
 // URLRepository defines abstract repository operations
 type URLRepository interface {
-	FindURL(string) (entities.URL, error)
-	SaveVisitDetail(entities.VisitDetail) error
-	SaveShortURL(u string, s string) error
-	FindVisits(u string, offset int, limit int) ([]entities.VisitDetail, error)
-	TotalVisits(u string) int
+	FindURL(context.Context, string) (entities.URL, error)
+	SaveVisitDetail(context.Context, entities.VisitDetail) error
+	SaveShortURL(ctx context.Context, u string, s string) error
+	FindVisits(ctx context.Context, u string, offset int, limit int) ([]entities.VisitDetail, error)
+	TotalVisits(ctx context.Context, u string) int
 }
