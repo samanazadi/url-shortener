@@ -39,7 +39,7 @@ func main() {
 	logging.Logger.Info("algorithms initialized")
 
 	// router
-	rtr, handler, err := router.New(cfg)
+	rtr, db, err := router.New(cfg)
 	if err != nil {
 		logging.Logger.Panic(err.Error())
 	}
@@ -69,7 +69,14 @@ func main() {
 	logging.Logger.Info("starting server shutdown ...")
 
 	go func() {
-		if err := handler.Close(); err != nil {
+		sqlDB, err := db.DB()
+		if err != nil {
+			logging.Logger.Error("cannot close SQL handler", "error", err)
+			doneSQLHandler <- true
+			return
+		}
+
+		if err := sqlDB.Close(); err != nil {
 			logging.Logger.Error("cannot close SQL handler", "error", err)
 		} else {
 			logging.Logger.Info("SQL handler closed")

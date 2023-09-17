@@ -2,12 +2,13 @@ package controllers
 
 import (
 	"context"
+	"github.com/samanazadi/url-shortener/internal/adapters/controllers/models"
 	"github.com/samanazadi/url-shortener/internal/config"
 	"github.com/samanazadi/url-shortener/internal/usecases"
 	"github.com/samanazadi/url-shortener/pkg/entities"
 	"github.com/samanazadi/url-shortener/pkg/logging"
+	"gorm.io/gorm"
 	"strconv"
-	"time"
 )
 
 // URLController is responsible for redirecting user
@@ -16,11 +17,11 @@ type URLController struct {
 }
 
 // NewURLController is a creator function for URLController
-func NewURLController(h SQLHandler) *URLController {
+func NewURLController(db *gorm.DB) *URLController {
 	return &URLController{
 		urlUseCase: usecases.URLUsecase{
 			URLRepository: URLControllerRepository{
-				SQLHandler: h,
+				DB: db,
 			},
 		},
 	}
@@ -104,88 +105,69 @@ type URLControllerInputPort interface {
 	Redirect(u string)
 }
 
-// SQLHandler will be injected by infrastructure layer
-type SQLHandler interface {
-	ExecContext(context.Context, string, ...any) (Result, error)
-	QueryRowContext(context.Context, string, ...any) Row
-	QueryContext(context.Context, string, ...any) (Rows, error)
-	Close() error
-}
-
-// Result is a SQL Exec result
-type Result interface {
-	LastInsertId() (int64, error)
-	RowsAffected() (int64, error)
-}
-
-// Row is one row in a SQL table
-type Row interface {
-	Scan(...any) error
-}
-
-type Rows interface {
-	Scan(...any) error
-	Next() bool
-}
-
 // URLControllerRepository is an implementation of usecases.URLRepository
 type URLControllerRepository struct {
-	SQLHandler SQLHandler
+	DB *gorm.DB
 }
 
-func (r URLControllerRepository) SaveShortURL(ctx context.Context, u string, s string) error {
-	_, err := r.SQLHandler.ExecContext(ctx, "INSERT INTO urls (short_url, original_url) VALUES ($1, $2)",
-		s, u)
-	return err
+func (r URLControllerRepository) SaveShortURL(ctx context.Context, original string, short string) error {
+	u := &models.URL{
+		ShortURL:    short,
+		OriginalURL: original,
+	}
+	result := r.DB.WithContext(ctx).Create(u)
+	return result.Error
 }
 
 // FindURL queries the database for specified URL
-func (r URLControllerRepository) FindURL(ctx context.Context, u string) (entities.URL, error) {
-	row := r.SQLHandler.QueryRowContext(ctx, "SELECT * FROM urls WHERE short_url = $1", u)
-	var shortURL, originalURL string
-	err := row.Scan(&shortURL, &originalURL)
-	if err != nil {
-		return entities.URL{}, err
+func (r URLControllerRepository) FindURL(ctx context.Context, short string) (entities.URL, error) {
+	var u models.URL
+	result := r.DB.WithContext(ctx).Where("short_url", short).First(&u)
+	if result.Error != nil {
+		return entities.URL{}, result.Error
 	}
-	return entities.URL{ShortURL: shortURL, OriginalURL: originalURL}, nil
+	return entities.URL{
+		ShortURL:    u.ShortURL,
+		OriginalURL: u.OriginalURL,
+	}, nil
 }
 
 func (r URLControllerRepository) SaveVisitDetail(ctx context.Context, vd entities.VisitDetail) error {
-	_, err := r.SQLHandler.ExecContext(ctx, "INSERT INTO visits (ip, time, user_agent, short_url) VALUES ($1, $2, $3, $4)",
-		vd.IP, vd.Time, vd.UserAgent, vd.ShortURL)
-	return err
+	v := &models.Visit{
+		IP:        vd.IP,
+		Time:      vd.Time,
+		UserAgent: &vd.UserAgent,
+		ShortURL:  vd.ShortURL,
+	}
+	result := r.DB.WithContext(ctx).Create(v)
+	return result.Error
 }
 
-func (r URLControllerRepository) FindVisits(ctx context.Context, u string, offset int, limit int) ([]entities.VisitDetail, error) {
-	rows, err := r.SQLHandler.QueryContext(ctx, "SELECT ip, time, user_agent, short_url FROM visits WHERE short_url = $1 LIMIT $2 OFFSET $3",
-		u, limit, offset)
-	if err != nil {
-		return nil, err
+func (r URLControllerRepository) FindVisits(ctx context.Context, short string, offset int, limit int) ([]entities.VisitDetail, error) {
+	var visits []models.Visit
+	result := r.DB.WithContext(ctx).Model(&models.Visit{}).Where("short_url = ?", short).Limit(limit).Offset(offset).Find(&visits)
+	if result.Error != nil {
+		return nil, result.Error
 	}
 	vds := make([]entities.VisitDetail, 0)
-	var (
-		ip        string
-		t         time.Time
-		userAgent string
-		shortURL  string
-	)
-	for rows.Next() {
-		err = rows.Scan(&ip, &t, &userAgent, &shortURL)
-		if err != nil {
-			return vds, err
-		}
-		vds = append(vds, entities.VisitDetail{IP: ip, Time: t, UserAgent: userAgent, ShortURL: shortURL})
+	for _, v := range visits {
+		vds = append(vds, entities.VisitDetail{
+			IP:        v.IP,
+			Time:      v.Time,
+			UserAgent: *v.UserAgent,
+			ShortURL:  v.ShortURL,
+		})
 	}
 	return vds, nil
 }
 
-func (r URLControllerRepository) TotalVisits(ctx context.Context, u string) int {
-	row := r.SQLHandler.QueryRowContext(ctx, "SELECT COUNT(*) FROM visits WHERE short_url = $1", u)
-	var total int = 0
-	if err := row.Scan(&total); err != nil {
-		return 0
+func (r URLControllerRepository) TotalVisits(ctx context.Context, u string) (int, error) {
+	var count int64
+	result := r.DB.WithContext(ctx).Model(&models.Visit{}).Where("short_url = ?", u).Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
 	}
-	return total
+	return int(count), nil
 }
 
 func AtoIWithDefault(s string, d int) int {

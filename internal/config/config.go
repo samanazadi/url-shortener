@@ -13,6 +13,7 @@ type Config struct {
 	DBUser       string
 	DBPass       string
 	DBHost       string
+	DBPort       string
 	DBName       string
 }
 

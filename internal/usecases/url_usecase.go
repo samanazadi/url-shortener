@@ -33,9 +33,16 @@ func (u URLUsecase) SaveVisitDetail(ctx context.Context, vd entities.VisitDetail
 }
 
 func (u URLUsecase) Visits(ctx context.Context, url string, offset int, limit int) ([]entities.VisitDetail, int, error) {
-	total := u.URLRepository.TotalVisits(ctx, url)
-	vds, err := u.URLRepository.FindVisits(ctx, url, offset, limit)
-	return vds, total, err
+	total, err1 := u.URLRepository.TotalVisits(ctx, url)
+	vds, err2 := u.URLRepository.FindVisits(ctx, url, offset, limit)
+	if err1 != nil {
+		return vds, total, err1
+	} else if err2 != nil {
+		return vds, total, err2
+	} else {
+		return vds, total, nil
+	}
+
 }
 
 // URLRepository defines abstract repository operations
@@ -44,5 +51,5 @@ type URLRepository interface {
 	SaveVisitDetail(context.Context, entities.VisitDetail) error
 	SaveShortURL(ctx context.Context, u string, s string) error
 	FindVisits(ctx context.Context, u string, offset int, limit int) ([]entities.VisitDetail, error)
-	TotalVisits(ctx context.Context, u string) int
+	TotalVisits(ctx context.Context, u string) (int, error)
 }

@@ -2,23 +2,24 @@ package router
 
 import (
 	"github.com/samanazadi/url-shortener/internal/config"
+	"github.com/samanazadi/url-shortener/internal/infrastructure/database"
 	"github.com/samanazadi/url-shortener/pkg/entities"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/samanazadi/url-shortener/internal/adapters/controllers"
-	"github.com/samanazadi/url-shortener/internal/infrastructure/database/postgres"
 	"github.com/samanazadi/url-shortener/internal/infrastructure/router/json"
+	"gorm.io/gorm"
 )
 
-func New(cfg *config.Config) (*gin.Engine, controllers.SQLHandler, error) {
+func New(cfg *config.Config) (*gin.Engine, *gorm.DB, error) {
 	router := gin.Default()
-	handler, err := postgres.NewSQLHandler(cfg)
+	db, err := database.NewGormDB(cfg)
 	if err != nil {
 		return nil, nil, err
 	}
-	urlController := controllers.NewURLController(handler)
+	urlController := controllers.NewURLController(db)
 
 	router.GET("/u/:id", func(c *gin.Context) {
 		urlController.GetDetails(c, WebURLControllerInputPort{c: c}, cfg)
@@ -30,7 +31,7 @@ func New(cfg *config.Config) (*gin.Engine, controllers.SQLHandler, error) {
 		urlController.RedirectToOriginalURL(c, WebURLControllerInputPort{c: c})
 	})
 
-	return router, handler, nil
+	return router, db, nil
 }
 
 // WebURLControllerInputPort implements controllers.URLControllerInputPort
